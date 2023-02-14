@@ -101,7 +101,9 @@ void QBSSolution::main()
         N[j] = q_p*NP + q_f*NF;
         ham[j] = (16.*M_PI*rho_density - ricc)/(fabs(ricc) + 10e-14);
         HAM += ham[j]*ham[j]*dx*rawrad/rad;
-        mass_adm[j] = -psi[j]*dpsi[j]*rawrad*rawrad;
+        radial_pressure[j] = psi[j]*psi[j]*(pow(p[j]*(WP+q_p*z[j]),2) + pow(f[j]*(WF+q_f*z[j]),2))/omega[j]/omega[j];
+        radial_pressure[j] += df[j]*df[j] + dp[j]*dp[j] - V(f[j],p[j])*psi[j]*psi[j] - 0.5*dz[j]*dz[j]/omega[j]/omega[j];
+        radial_pressure[j] *= 4.*M_PI*rawrad*rawrad*pow(psi[j],3); // the volume element on the surface of a sphere
         Noether += (NP+NF)*dx;
         Leccy_charge += (NP*q_p + NF*q_f)*dx;
         dipole += rad*(NP*q_p + NF*q_f)*dx;
@@ -1169,7 +1171,7 @@ void QBSSolution::set_initialcondition_params(QBSParams &m_params_QBS)
     dpsi.resize(gridsize); //conformal factor gradient
     omega.resize(gridsize); // lapse
     radius_array.resize(gridsize); //radius
-    mass_adm.resize(gridsize); 
+    radial_pressure.resize(gridsize); 
     N.resize(gridsize); 
     ham.resize(gridsize); 
 
@@ -1196,14 +1198,14 @@ void QBSSolution::shout() const
 
 void QBSSolution::output_csv()
 {
-    std::ofstream p_file, q_file, f_file, psi_file, omega_file, r_file, mass_file, ham_file, N_file;
+    std::ofstream p_file, q_file, f_file, psi_file, omega_file, r_file, press_file, ham_file, N_file;
     p_file.open("p.csv");
     f_file.open("f.csv");
     q_file.open("q.csv");
     psi_file.open("psi.csv");
     omega_file.open("omega.csv");
     r_file.open("r.csv");
-    mass_file.open("adm.csv");
+    press_file.open("press.csv");
     ham_file.open("ham.csv");
     N_file.open("n.csv");
 
@@ -1215,7 +1217,7 @@ void QBSSolution::output_csv()
         psi_file << psi[i] << "," << std::endl;
         omega_file << omega[i] << "," << std::endl;
         r_file << radius_array[i] << "," << std::endl;
-        mass_file << mass_adm[i] << "," << std::endl;
+        press_file << radial_pressure[i] << "," << std::endl;
         ham_file << ham[i] << "," << std::endl;
         N_file << N[i] << "," << std::endl;
     }
@@ -1226,7 +1228,7 @@ void QBSSolution::output_csv()
     psi_file.close();
     omega_file.close();
     r_file.close();
-    mass_file.close();
+    press_file.close();
     ham_file.close();
     N_file.close();
 }

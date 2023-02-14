@@ -37,7 +37,7 @@ private: // private member variables/arrays
     std::vector<double> z;  // leccy field
     std::vector<double> dz; // leccy field deriv
   	std::vector<double> N; // field 
-    std::vector<double> mass_adm; // field 
+    std::vector<double> radial_pressure; // field 
     std::vector<double> ham; 
   	std::vector<double> psi; //conformal factor
   	std::vector<double> dpsi; //conformal factor gradient
