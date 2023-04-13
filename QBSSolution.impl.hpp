@@ -99,7 +99,7 @@ void QBSSolution::main()
         NPtot += NP*dx;
         NFtot += NF*dx;
         N[j] = q_p*NP + q_f*NF;
-        ham[j] = (16.*M_PI*rho_density - ricc)/(fabs(ricc) + 10e-14);
+        ham[j] = (16.*M_PI*GNEWT*LAMBDA*LAMBDA*rho_density - ricc)/(fabs(ricc) + 10e-14);
         HAM += ham[j]*ham[j]*dx*rawrad/rad;
         radial_pressure[j] = psi[j]*psi[j]*(pow(p[j]*(WP+q_p*z[j]),2) + pow(f[j]*(WF+q_f*z[j]),2))/omega[j]/omega[j];
         radial_pressure[j] += df[j]*df[j] + dp[j]*dp[j] - V(f[j],p[j])*psi[j]*psi[j] - 0.5*dz[j]*dz[j]/omega[j]/omega[j];
@@ -982,17 +982,19 @@ double QBSSolution::DPSI_RHS(const double x, const double P, const double F, con
 {
     double r = ((x==0.)?eps:x);
     double Ttt =  P*P*pow(w_p+q_p*Z,2) + F*F*pow(w_f+q_f*Z,2);
+    double LambdaSqr = LAMBDA*LAMBDA;
     Ttt += OM*OM*(DP*DP + DF*DF)/(PSI*PSI);
     Ttt += OM*OM*V(P,F) + DZ*DZ/(2.*PSI*PSI);
-    return -4.*M_PI*GNEWT*Ttt*PSI*PSI*PSI/(OM*OM) - 2.*DPSI/r + 0.5*DPSI*DPSI/PSI;
+    return -4.*M_PI*LambdaSqr*GNEWT*Ttt*PSI*PSI*PSI/(OM*OM) - 2.*DPSI/r + 0.5*DPSI*DPSI/PSI;
 }
 
 
 double QBSSolution::OMEGA_RHS(const double x, const double P, const double F, const double Z, const double DP, const double DF, const double DZ, const double PSI, const double DPSI, const double OM, const double w_p, const double w_f)
 {
     double Trr =  ( P*P*pow(w_p+q_p*Z,2) + F*F*pow(w_f+q_f*Z,2) )*PSI*PSI/OM/OM;
+    double LambdaSqr = LAMBDA*LAMBDA;
     Trr += DP*DP + DF*DF - V(P,F)*PSI*PSI - DZ*DZ/(2.*OM*OM);
-    return OM*(8.*M_PI*GNEWT*x*Trr*PSI*PSI - 2.*PSI*DPSI - x*DPSI*DPSI)/(2.*PSI*(x*DPSI+PSI));
+    return OM*(8.*M_PI*LambdaSqr*GNEWT*x*Trr*PSI*PSI - 2.*PSI*DPSI - x*DPSI*DPSI)/(2.*PSI*(x*DPSI+PSI));
 }
 
 
@@ -1187,6 +1189,7 @@ void QBSSolution::set_initialcondition_params(QBSParams &m_params_QBS)
     lambda_fp = m_params_QBS.lambda_fp;
     lambda_pp = m_params_QBS.lambda_pp;
     repeats = m_params_QBS.solve_iterations;
+    LAMBDA = m_params_QBS.LAMBDA;
 }
 
 

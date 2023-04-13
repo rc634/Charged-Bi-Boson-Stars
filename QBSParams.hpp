@@ -23,6 +23,7 @@ struct QBSParams
 	    double lambda_ff = 0.5; // ffff coefficient in potential
 	    double lambda_fp =  0.3; // ffpp coefficient in potential
 	    double lambda_pp = 0.6; // pppp coefficient in potential
+	    double LAMBDA = 1.0; // rescales newtons constant, G_{ab} = LAMBDA^2 8 pi G T_{ab} / c^4
 
 
 

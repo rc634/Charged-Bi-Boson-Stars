@@ -14,11 +14,8 @@ private: // private member variables/arrays
     const double GNEWT = 1;// 1./(M_PI*4.); // rescales KG field in ODE's
     double PSC=1., OMC=1.; // central density of scalar field (0.272 for kaup)  PSC and OMC are central values of conformal factor and lapse, not important as long as they are sensible (i.e. order 1)
     double lambda_ff, lambda_fp, lambda_pp; // phi 4 coupling in Klein gordon potential
-    double sigma; // 0.2 works with PC = 0.05 // parameter for solitonic stars
-    bool solitonic; // false fro mini/lambda star. true for solitonic star
-    double EIGEN; // the desired eigenstate, 0 for ground
-    int gridsize, adaptive_buffer, repeats; // anywhere from 2k-200k is ok
-    const int adaptive_stepsize_repetitions = 20;//50; // 0 for no adaptive
+    double LAMBDA; // G_{ab} = LAMBDA^2 8 pi G T_{ab} / c^4
+    int gridsize, repeats, EIGEN=1, adaptive_buffer=0;
   	double L, dx, W, w, WP=0., WF=0.; // L, length of domain, dx.
   	double OM_INF, PSI_INF, Z_INF; // asymptotics of lapse and cpnformal factpr
   	int mid_int; // integer where growing mode becomes relevant
